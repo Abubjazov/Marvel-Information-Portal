@@ -12,26 +12,24 @@ export class RandomChar extends Component {
     }
 
     state = {
-        name: null,
-        description: null,
-        thumbnail: null,
-        homepage: null,
-        wiki: null
+        character: {}
     }
 
     marvelService = new MarvelService()
+
+    onCharLoaded = (character) => {
+        this.setState({character})
+    }
 
     updateChar = () => {
         const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000)
         this.marvelService
             .getCharacter(id)
-            .then(res => {
-                this.setState(res)
-            })
+            .then(this.onCharLoaded)
     }
     
     render() {
-        const {name, description, thumbnail, homepage, wiki} = this.state
+        const {character: {name, description, thumbnail, homepage, wiki}} = this.state
         
         return (
             <div className="randomchar">
