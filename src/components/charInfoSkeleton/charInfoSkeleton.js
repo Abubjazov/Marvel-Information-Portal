@@ -1,4 +1,4 @@
-import './CharInfo-Skeleton.scss'
+import './CharInfoSkeleton.scss'
 
 export const CharInfoSkeleton = () => {
     return (
