@@ -27,7 +27,7 @@ class MarvelService {
         return {
             id: char.id,
             name: char.name,
-            description: char.description.length < 1 ? 'character description not found' : char.description.length > 228 ? char.description.slice(0, 228) + '...' : char.description ,
+            description: char.description.length < 1 ? 'character description not found' : char.description.length > 225 ? char.description.slice(0, 220) + '...' : char.description ,
             thumbnail: char.thumbnail.path + '.' + char.thumbnail.extension,
             homepage: char.urls[0].url,
             wiki: char.urls[1].url
