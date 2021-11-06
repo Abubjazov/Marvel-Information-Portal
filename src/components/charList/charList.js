@@ -9,7 +9,7 @@ export class  CharList  extends Component {
         characters: [],
         loading: true,
         error: false
-    }
+    }    
 
     marvelService = new MarvelService()
 
@@ -36,7 +36,7 @@ export class  CharList  extends Component {
         const {characters, loading, error} = this.state
         const errorMessage = error ? <ErrorMsg /> : null
         const spinner = loading ? <Spinner /> : null
-        const content = !(loading || error) ? <View characters={characters} /> : null
+        const content = !(loading || error) ? <View characters={characters} onCharacterSelected={this.props.onCharacterSelected} /> : null
 
         return (
             <div className="char__list">
@@ -48,7 +48,8 @@ export class  CharList  extends Component {
     }
 }
 
-const View = ({characters}) => {
+const View = (props) => {
+    const {characters, onCharacterSelected} = props
     const content = characters.map(character => {
         const {id, name, thumbnail} = character
         let imgStyle = {'objectFit' : 'cover'}
@@ -58,7 +59,8 @@ const View = ({characters}) => {
         return (
             <li 
             key={id}
-            className="char__item">
+            className="char__item"
+            onClick={() => onCharacterSelected(id)}>
                 <img src={thumbnail} alt={name} style={imgStyle}/>
                 <div className="char__name">{name}</div>
             </li>
