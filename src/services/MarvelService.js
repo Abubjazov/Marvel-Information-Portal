@@ -26,7 +26,7 @@ class MarvelService {
     _transformCharacter = (char) => {
         return {
             name: char.name,
-            description: char.description,
+            description: char.description.length < 1 ? 'character description not found' : char.description.length > 228 ? char.description.slice(0, 228) + '...' : char.description ,
             thumbnail: char.thumbnail.path + '.' + char.thumbnail.extension,
             homepage: char.urls[0].url,
             wiki: char.urls[1].url
@@ -35,3 +35,5 @@ class MarvelService {
 }
 
 export default MarvelService
+
+console.log(`As the Norse God of thunder and lightning, Thor wields one of the greatest weapons ever made, the enchanted hammer Mjolnir. While others have described Thor as an over-muscled, oafish imbecile, he's quite smart and compassionate`.length)
