@@ -1,6 +1,7 @@
 import { Component } from 'react'
 import { Spinner } from '../spinner/spinner'
 import { ErrorMsg } from '../errorMsg/errorMsg'
+import PropTypes from 'prop-types'
 import MarvelService from '../../services/MarvelService'
 import './CharList.scss'
 
@@ -99,4 +100,8 @@ const View = (props) => {
             </button>
         </>
     )
+}
+
+CharList.propTypes = {
+    onCharacterSelected: PropTypes.number.isRequired
 }

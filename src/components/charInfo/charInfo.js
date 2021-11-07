@@ -2,6 +2,7 @@ import { Component } from 'react'
 import { Spinner } from '../spinner/spinner'
 import { ErrorMsg } from '../errorMsg/errorMsg'
 import { CharInfoSkeleton } from '../charInfoSkeleton/charInfoSkeleton'
+import PropTypes from 'prop-types'
 import MarvelService from '../../services/MarvelService'
 
 import './CharInfo.scss'
@@ -115,4 +116,8 @@ const View = ({character}) => {
             </ul>
         </>
     )
+}
+
+CharInfo.propTypes = {
+    characterId: PropTypes.number.isRequired
 }

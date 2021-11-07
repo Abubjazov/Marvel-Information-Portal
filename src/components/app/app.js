@@ -28,9 +28,9 @@ export class App extends Component {
                         <RandomChar />
                     </ErrorBoundary>
                     <div className="char__content">
-                        {/* <ErrorBoundary> */}
+                        <ErrorBoundary>
                             <CharList onCharacterSelected={this.onCharacterSelected}/>
-                        {/* </ErrorBoundary> */}
+                        </ErrorBoundary>
                         <ErrorBoundary>
                             <CharInfo characterId={this.state.selectedCharacter}/>
                         </ErrorBoundary>                        
