@@ -78,16 +78,14 @@ const View = ({character}) => {
     let imgStyle = {'objectFit' : 'cover'}
 
     if (comics) {
-        content = comics.map((comic, index) => {
-            if (index < 12) {
-                return (
-                    <li 
-                        className="char__comics-item" 
-                        key={index}>
-                        <a href={comic.resourceURI}>{comic.name}</a>
-                    </li>            
-                )
-            }
+        content = comics.map((comic, index) => {            
+            return (
+                <li 
+                    className="char__comics-item" 
+                    key={index}>
+                    <a href={comic.resourceURI}>{comic.name}</a>
+                </li>            
+            )
         })
     }    
 

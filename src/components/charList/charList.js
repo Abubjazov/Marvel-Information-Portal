@@ -50,11 +50,24 @@ export class  CharList  extends Component {
             .catch(this.onError)
     }
 
+    itemRefs = [];
+
+    setRef = (ref) => {
+        this.itemRefs.push(ref);
+    }
+
+    focusOnItem = (id) => {
+        this.itemRefs.forEach(item => item.classList.remove('char__item_selected'));
+        this.itemRefs[id].classList.add('char__item_selected');
+        this.itemRefs[id].focus();
+    }
+
+
     render() {
         const {characters, loading, error, loadingNewItems, endOfCharacters} = this.state
         const errorMessage = error ? <ErrorMsg /> : null
         const spinner = loading ? <Spinner /> : null
-        const content = !(loading || error) ? <View characters={characters} onCharacterSelected={this.props.onCharacterSelected} updateCharacterList={this.updateCharacterList} loadingNewItems={loadingNewItems} endOfCharacters={endOfCharacters}/> : null
+        const content = !(loading || error) ? <View characters={characters} onCharacterSelected={this.props.onCharacterSelected} updateCharacterList={this.updateCharacterList} loadingNewItems={loadingNewItems} endOfCharacters={endOfCharacters} setRef={this.setRef} focusOnItem={this.focusOnItem}/> : null
 
         return (
             <div className="char__list">
@@ -67,8 +80,8 @@ export class  CharList  extends Component {
 }
 
 const View = (props) => {
-    const {characters, onCharacterSelected, updateCharacterList, loadingNewItems, endOfCharacters} = props
-    const content = characters.map(character => {
+    const {characters, onCharacterSelected, updateCharacterList, loadingNewItems, endOfCharacters, setRef, focusOnItem} = props
+    const content = characters.map((character, i) => {
         const {id, name, thumbnail} = character
         let imgStyle = {'objectFit' : 'cover'}
 
@@ -78,7 +91,17 @@ const View = (props) => {
             <li 
             key={id}
             className="char__item"
-            onClick={() => onCharacterSelected(id)}>
+            tabIndex={0}
+            ref={setRef}
+            onClick={() => {
+                onCharacterSelected(id)
+                focusOnItem(i)}}
+            onKeyPress={(e) => {
+                if (e.key === ' ' || e.key === "Enter") {
+                    onCharacterSelected(id);
+                    focusOnItem(i);
+                }
+            }}>
                 <img src={thumbnail} alt={name} style={imgStyle}/>
                 <div className="char__name">{name}</div>
             </li>
