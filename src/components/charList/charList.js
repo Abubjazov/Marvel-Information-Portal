@@ -8,8 +8,10 @@ export class  CharList  extends Component {
     state = {
         characters: [],
         loading: true,
+        loadingNewItems: false,
         error: false,
-        offset: 400
+        offset: 1545,
+        endOfCharacters: false
     }    
 
     marvelService = new MarvelService()
@@ -24,13 +26,20 @@ export class  CharList  extends Component {
 
     onCharacterLoading = () => {
         this.setState({
-            loading: true,
+            loadingNewItems: true,
             error: false
         })
     }
 
-    onCharacterListLoaded = (characters) => {
-        this.setState({characters: characters, loading: false, offset: this.state.offset + 6})
+    onCharacterListLoaded = (newCharacters) => {
+        let s = newCharacters.length < 9 ? true : false
+        this.setState(({characters, offset}) => ({
+            characters: [...characters, ...newCharacters], 
+            loading: false,
+            loadingNewItems: false,
+            offset: offset + 9,
+            endOfCharacters: s
+        }))
     }
 
     updateCharacterList = () => {
@@ -42,10 +51,10 @@ export class  CharList  extends Component {
     }
 
     render() {
-        const {characters, loading, error} = this.state
+        const {characters, loading, error, loadingNewItems, endOfCharacters} = this.state
         const errorMessage = error ? <ErrorMsg /> : null
         const spinner = loading ? <Spinner /> : null
-        const content = !(loading || error) ? <View characters={characters} onCharacterSelected={this.props.onCharacterSelected} updateCharacterList={this.updateCharacterList}/> : null
+        const content = !(loading || error) ? <View characters={characters} onCharacterSelected={this.props.onCharacterSelected} updateCharacterList={this.updateCharacterList} loadingNewItems={loadingNewItems} endOfCharacters={endOfCharacters}/> : null
 
         return (
             <div className="char__list">
@@ -58,7 +67,7 @@ export class  CharList  extends Component {
 }
 
 const View = (props) => {
-    const {characters, onCharacterSelected, updateCharacterList} = props
+    const {characters, onCharacterSelected, updateCharacterList, loadingNewItems, endOfCharacters} = props
     const content = characters.map(character => {
         const {id, name, thumbnail} = character
         let imgStyle = {'objectFit' : 'cover'}
@@ -84,6 +93,8 @@ const View = (props) => {
 
             <button 
             className="button button__main button__long"
+            disabled={loadingNewItems}
+            style={{"display" : endOfCharacters ? 'none' : 'block'}}
             onClick={updateCharacterList}>
                 <div className="inner">load more</div>
             </button>
