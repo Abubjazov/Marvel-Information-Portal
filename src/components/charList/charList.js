@@ -10,7 +10,7 @@ export class  CharList  extends Component {
         loading: true,
         loadingNewItems: false,
         error: false,
-        offset: 1545,
+        offset: 1540,
         endOfCharacters: false
     }    
 
@@ -32,13 +32,12 @@ export class  CharList  extends Component {
     }
 
     onCharacterListLoaded = (newCharacters) => {
-        let s = newCharacters.length < 9 ? true : false
         this.setState(({characters, offset}) => ({
             characters: [...characters, ...newCharacters], 
             loading: false,
             loadingNewItems: false,
             offset: offset + 9,
-            endOfCharacters: s
+            endOfCharacters: newCharacters.length < 9 ? true : false
         }))
     }
 
