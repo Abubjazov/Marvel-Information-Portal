@@ -8,27 +8,36 @@ export class  CharList  extends Component {
     state = {
         characters: [],
         loading: true,
-        error: false
+        error: false,
+        offset: 400
     }    
 
     marvelService = new MarvelService()
 
     componentDidMount() {
-        this.updateCharList()
+        this.updateCharacterList()
     }
 
     onError = () => {
         this.setState({loading: false, error: true})
     }
 
-    onCharListLoaded = (characters) => {
-        this.setState({characters, loading: false})
+    onCharacterLoading = () => {
+        this.setState({
+            loading: true,
+            error: false
+        })
     }
 
-    updateCharList = () => {
+    onCharacterListLoaded = (characters) => {
+        this.setState({characters: characters, loading: false, offset: this.state.offset + 6})
+    }
+
+    updateCharacterList = () => {
+        this.onCharacterLoading();
         this.marvelService
-            .getAllCharacters()
-            .then(this.onCharListLoaded)
+            .getAllCharacters(this.state.offset)
+            .then(this.onCharacterListLoaded)
             .catch(this.onError)
     }
 
@@ -36,7 +45,7 @@ export class  CharList  extends Component {
         const {characters, loading, error} = this.state
         const errorMessage = error ? <ErrorMsg /> : null
         const spinner = loading ? <Spinner /> : null
-        const content = !(loading || error) ? <View characters={characters} onCharacterSelected={this.props.onCharacterSelected} /> : null
+        const content = !(loading || error) ? <View characters={characters} onCharacterSelected={this.props.onCharacterSelected} updateCharacterList={this.updateCharacterList}/> : null
 
         return (
             <div className="char__list">
@@ -49,7 +58,7 @@ export class  CharList  extends Component {
 }
 
 const View = (props) => {
-    const {characters, onCharacterSelected} = props
+    const {characters, onCharacterSelected, updateCharacterList} = props
     const content = characters.map(character => {
         const {id, name, thumbnail} = character
         let imgStyle = {'objectFit' : 'cover'}
@@ -73,7 +82,9 @@ const View = (props) => {
                 {content}
             </ul>
 
-            <button className="button button__main button__long">
+            <button 
+            className="button button__main button__long"
+            onClick={updateCharacterList}>
                 <div className="inner">load more</div>
             </button>
         </>
