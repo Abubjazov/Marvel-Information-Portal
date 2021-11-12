@@ -2,7 +2,6 @@ import { Component } from 'react'
 import { Spinner } from '../spinner/spinner'
 import { ErrorMsg } from '../errorMsg/errorMsg'
 import { CharInfoSkeleton } from '../charInfoSkeleton/charInfoSkeleton'
-import PropTypes from 'prop-types'
 import MarvelService from '../../services/MarvelService'
 
 import './CharInfo.scss'
@@ -23,11 +22,11 @@ export class CharInfo extends Component {
     componentDidUpdate(prevProps) {
         if (prevProps.characterId !== this.props.characterId) {
             this.loadCharacter()
-        }  
+        }
     }
 
     onError = () => {
-        this.setState({loading: false, error: true})
+        this.setState({ loading: false, error: true })
     }
 
     onCharacterLoading = () => {
@@ -38,13 +37,13 @@ export class CharInfo extends Component {
     }
 
     onCharacterLoaded = (character) => {
-        this.setState({character, loading: false})
+        this.setState({ character, loading: false })
     }
 
     loadCharacter = () => {
-        const {characterId} = this.props
+        const { characterId } = this.props
 
-        if (!characterId) {return}
+        if (!characterId) { return }
 
         this.onCharacterLoading();
         this.marvelService
@@ -54,11 +53,11 @@ export class CharInfo extends Component {
     }
 
     render() {
-        const {character, loading, error} = this.state
+        const { character, loading, error } = this.state
 
         const errorMessage = error ? <ErrorMsg /> : null
         const spinner = loading ? <Spinner /> : null
-        const skeleton = !this.props.characterId ? <CharInfoSkeleton /> : null 
+        const skeleton = !this.props.characterId ? <CharInfoSkeleton /> : null
         const content = !(loading || error || !character) ? <View character={character} /> : null
 
         return (
@@ -72,40 +71,40 @@ export class CharInfo extends Component {
     }
 }
 
-const View = ({character}) => {
-    const {name, description, thumbnail, homepage, wiki, comics} = character
+const View = ({ character }) => {
+    const { name, description, thumbnail, homepage, wiki, comics } = character
     let content = null
-    let imgStyle = {'objectFit' : 'cover'}
+    let imgStyle = { 'objectFit': 'cover' }
 
     if (comics) {
-        content = comics.map((comic, index) => {            
+        content = comics.map((comic, index) => {
             return (
-                <li 
-                    className="char__comics-item" 
+                <li
+                    className="char__comics-item"
                     key={index}>
                     <a href={comic.resourceURI}>{comic.name}</a>
-                </li>            
+                </li>
             )
         })
-    }    
+    }
 
-    if (thumbnail === 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg') {imgStyle = {'objectFit' : 'unset'}}
-    
+    if (thumbnail === 'http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg') { imgStyle = { 'objectFit': 'unset' } }
+
     return (
         <>
             <div className="char__basics">
-            <img src={thumbnail} alt={name} style={imgStyle}/>
-            <div>
-                <div className="char__info-name">{name}</div>
-                <div className="char__btns">
-                    <a href={homepage} className="button button__main">
-                        <div className="inner">homepage</div>
-                    </a>
-                    <a href={wiki} className="button button__secondary">
-                        <div className="inner">Wiki</div>
-                    </a>
+                <img src={thumbnail} alt={name} style={imgStyle} />
+                <div>
+                    <div className="char__info-name">{name}</div>
+                    <div className="char__btns">
+                        <a href={homepage} className="button button__main">
+                            <div className="inner">homepage</div>
+                        </a>
+                        <a href={wiki} className="button button__secondary">
+                            <div className="inner">Wiki</div>
+                        </a>
+                    </div>
                 </div>
-            </div>
             </div>
             <div className="char__descr">{description}</div>
             <div className="char__comics">Comics:</div>
@@ -114,8 +113,4 @@ const View = ({character}) => {
             </ul>
         </>
     )
-}
-
-CharInfo.propTypes = {
-    characterId: PropTypes.number.isRequired
 }

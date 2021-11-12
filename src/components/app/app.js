@@ -9,13 +9,11 @@ import decoration from '../../resources/img/vision.png'
 
 
 export const App = () => {
-
     const [selectedCharacter, setSelectedCharacter] = useState(null)
 
     const onCharacterSelected = (id) => {
         setSelectedCharacter(id)
     }
-
 
     return (
         <div className="app">
