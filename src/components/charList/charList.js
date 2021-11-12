@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Spinner } from '../spinner/spinner'
 import { ErrorMsg } from '../errorMsg/errorMsg'
 import PropTypes from 'prop-types'
@@ -30,10 +30,10 @@ export const CharList = (props) => {
     }
 
     const onCharacterListLoaded = (newCharacters) => {
-        setCharacters([...characters, ...newCharacters])
+        setCharacters(characters => [...characters, ...newCharacters])
         setLoading(false)
         setLoadingNewItems(false)
-        setOffset(offset + 9)
+        setOffset(offset => offset + 9)
         setEndOfCharacters(newCharacters.length < 9 ? true : false)
     }
 
@@ -46,16 +46,12 @@ export const CharList = (props) => {
             .catch(onError)
     }
 
-    const itemRefs = []
-
-    const setRef = (ref) => {
-        itemRefs.push(ref)
-    }
+    const itemRefs = useRef([])
 
     const focusOnItem = (id) => {
-        itemRefs.forEach(item => item.classList.remove('char__item_selected'))
-        itemRefs[id].classList.add('char__item_selected')
-        itemRefs[id].focus()
+        itemRefs.current.forEach(item => item.classList.remove('char__item_selected'))
+        itemRefs.current[id].classList.add('char__item_selected')
+        itemRefs.current[id].focus()
     }
 
     const errorMessage = error ? <ErrorMsg /> : null
@@ -66,7 +62,7 @@ export const CharList = (props) => {
         updateCharacterList={updateCharacterList}
         loadingNewItems={loadingNewItems}
         endOfCharacters={endOfCharacters}
-        setRef={setRef}
+        itemRefs={itemRefs}
         focusOnItem={focusOnItem} /> : null
 
     return (
@@ -76,11 +72,10 @@ export const CharList = (props) => {
             {content}
         </div>
     )
-
 }
 
 const View = (props) => {
-    const { characters, onCharacterSelected, updateCharacterList, loadingNewItems, endOfCharacters, setRef, focusOnItem } = props
+    const { characters, onCharacterSelected, updateCharacterList, loadingNewItems, endOfCharacters, focusOnItem, itemRefs } = props
     const content = characters.map((character, i) => {
         const { id, name, thumbnail } = character
         let imgStyle = { 'objectFit': 'cover' }
@@ -92,7 +87,7 @@ const View = (props) => {
                 key={id}
                 className="char__item"
                 tabIndex={0}
-                ref={setRef}
+                ref={element => itemRefs.current[i] = element}
                 onClick={() => {
                     onCharacterSelected(id)
                     focusOnItem(i)
