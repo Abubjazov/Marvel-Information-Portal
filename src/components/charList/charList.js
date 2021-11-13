@@ -2,48 +2,33 @@ import { useState, useEffect, useRef } from 'react'
 import { Spinner } from '../spinner/spinner'
 import { ErrorMsg } from '../errorMsg/errorMsg'
 import PropTypes from 'prop-types'
-import MarvelService from '../../services/MarvelService'
 import './CharList.scss'
+import useMarvelService from '../../services/MarvelService'
 
 export const CharList = (props) => {
     const [characters, setCharacters] = useState([])
-    const [loading, setLoading] = useState(true)
     const [loadingNewItems, setLoadingNewItems] = useState(false)
-    const [error, setError] = useState(false)
     const [offset, setOffset] = useState(1540)
     const [endOfCharacters, setEndOfCharacters] = useState(false)
-
-    const marvelService = new MarvelService()
+    const { loading, error, getAllCharacters, clearError } = useMarvelService()
 
     useEffect(() => {
-        updateCharacterList()
+        updateCharacterList(false)
     }, [])
-
-    const onError = () => {
-        setLoading(false)
-        setError(true)
-    }
-
-    const onCharacterLoading = () => {
-        setLoadingNewItems(true)
-        setError(false)
-    }
 
     const onCharacterListLoaded = (newCharacters) => {
         setCharacters(characters => [...characters, ...newCharacters])
-        setLoading(false)
         setLoadingNewItems(false)
         setOffset(offset => offset + 9)
         setEndOfCharacters(newCharacters.length < 9 ? true : false)
     }
 
     const updateCharacterList = () => {
-        onCharacterLoading()
+        clearError()
+        setLoadingNewItems(true)
 
-        marvelService
-            .getAllCharacters(offset)
+        getAllCharacters(offset)
             .then(onCharacterListLoaded)
-            .catch(onError)
     }
 
     const itemRefs = useRef([])
@@ -55,15 +40,15 @@ export const CharList = (props) => {
     }
 
     const errorMessage = error ? <ErrorMsg /> : null
-    const spinner = loading ? <Spinner /> : null
-    const content = !(loading || error) ? <View
+    const spinner = loading && loadingNewItems ? <Spinner /> : null
+    const content = <View
         characters={characters}
         onCharacterSelected={props.onCharacterSelected}
         updateCharacterList={updateCharacterList}
         loadingNewItems={loadingNewItems}
         endOfCharacters={endOfCharacters}
         itemRefs={itemRefs}
-        focusOnItem={focusOnItem} /> : null
+        focusOnItem={focusOnItem} />
 
     return (
         <div className="char__list">

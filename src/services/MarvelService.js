@@ -1,42 +1,38 @@
-class MarvelService {
-    _apiBase = 'https://gateway.marvel.com:443/v1/public/'
-    _apiKey = `apikey=${process.env.REACT_APP_CLIENT_API_KEY}`
-    
-    getResource = async (url) => {
-        let res = await fetch(url)
+import { useHttp } from '../Hooks/http.hook'
 
-        if (!res.ok) {
-            throw new Error(`Could not fetch ${url}, status: ${res.status}`)
-        }
+const useMarvelService = () => {
+    const { loading, request, error, clearError } = useHttp()
 
-        return await res.json()
+    const _apiBase = 'https://gateway.marvel.com:443/v1/public/'
+    const _apiKey = `apikey=${process.env.REACT_APP_CLIENT_API_KEY}`
+
+
+
+    const getCharacter = async (id, mode = 'min') => {
+        const res = await request(`${_apiBase}characters/${id}?${_apiKey}`)
+
+        if (mode === 'min') return _transformCharacter(res.data.results[0])
+        if (mode === 'max') return _transformCharacterFull(res.data.results[0])
     }
 
-    getCharacter = async (id, mode = 'min') => {
-        const res = await this.getResource(`${this._apiBase}characters/${id}?${this._apiKey}`)
+    const getAllCharacters = async (offset) => {
+        const res = await request(`${_apiBase}characters?limit=9&offset=${offset}&${_apiKey}`)
 
-        if (mode === 'min') return this._transformCharacter(res.data.results[0])
-        if (mode === 'max') return this._transformCharacterFull(res.data.results[0]) 
+        return res.data.results.map(_transformCharacter)
     }
 
-    getAllCharacters = async (offset) => {
-        const res = await this.getResource(`${this._apiBase}characters?limit=9&offset=${offset}&${this._apiKey}`)
-
-        return res.data.results.map(this._transformCharacter)
-    }
-
-    _transformCharacter = (char) => {
+    const _transformCharacter = (char) => {
         return {
             id: char.id,
             name: char.name,
-            description: char.description.length < 1 ? 'character description not found' : char.description.length > 225 ? char.description.slice(0, 220) + '...' : char.description ,
+            description: char.description.length < 1 ? 'character description not found' : char.description.length > 225 ? char.description.slice(0, 220) + '...' : char.description,
             thumbnail: char.thumbnail.path + '.' + char.thumbnail.extension,
             homepage: char.urls[0].url,
             wiki: char.urls[1].url
         }
     }
 
-    _transformCharacterFull = (char) => {
+    const _transformCharacterFull = (char) => {
         return {
             id: char.id,
             name: char.name,
@@ -47,6 +43,8 @@ class MarvelService {
             comics: char.comics.items
         }
     }
+
+    return { loading, error, getCharacter, getAllCharacters, clearError }
 }
 
-export default MarvelService
+export default useMarvelService
