@@ -2,8 +2,9 @@ import { useState, useEffect, useRef } from 'react'
 import { Spinner } from '../spinner/spinner'
 import { ErrorMsg } from '../errorMsg/errorMsg'
 import PropTypes from 'prop-types'
-import './CharList.scss'
 import useMarvelService from '../../services/MarvelService'
+import './CharList.scss'
+
 
 export const CharList = (props) => {
     const [characters, setCharacters] = useState([])
@@ -61,6 +62,7 @@ export const CharList = (props) => {
 
 const View = (props) => {
     const { characters, onCharacterSelected, updateCharacterList, loadingNewItems, endOfCharacters, focusOnItem, itemRefs } = props
+
     const content = characters.map((character, i) => {
         const { id, name, thumbnail } = character
         let imgStyle = { 'objectFit': 'cover' }
