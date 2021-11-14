@@ -1,7 +1,6 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { AppHeader } from '../appHeader/appHeader'
-import { MainPage } from '../pages/mainPage'
-import { ComicsPage } from '../pages/comicsPage'
+import { MainPage, ComicsPage } from '../pages'
 
 export const App = () => {
     return (
