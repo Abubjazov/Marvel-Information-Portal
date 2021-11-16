@@ -52,11 +52,11 @@ const View = ({ comic }) => {
             <div className="comic__info">
                 <h2 className="comic__name">{name}</h2>
                 <p className="comic__descr">{description}</p>
-                <p className="comic__descr">{pages} pages</p>
+                <p className="comic__descr">{pages}</p>
                 <p className="comic__descr">{language}</p>
-                <div className="comic__price">{price}$</div>
+                <div className="comic__price">{price}</div>
             </div>
-            <Link to='/comics' className="comic__back">Back to all</Link>
+            <Link to='/comics' className="comic__back">Back</Link>
         </div>
     )
 }

@@ -49,11 +49,11 @@ const useMarvelService = () => {
             id: comic.id,
             name: comic.title,
             description: comic.description,
-            language: comic.textObjects[1] ? `Language: ${comic.textObjects[1]}` : '',
-            pages: comic.pageCount ? `${comic.pageCount}` : '',
+            language: typeof (comic.textObjects[1]) === 'string' ? `Language: ${comic.textObjects[1]}` : '',
+            pages: comic.pageCount ? `${comic.pageCount} pages` : '',
             thumbnail: comic.thumbnail.path + '.' + comic.thumbnail.extension,
             homepage: comic.urls[0].url,
-            price: comic.prices[0].price
+            price: comic.prices[0].price == '0' ? 'not available' : comic.prices[0].price + ' $'
         }
     }
 
