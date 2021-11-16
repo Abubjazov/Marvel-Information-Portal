@@ -1,9 +1,8 @@
-import { useState } from 'react'
 import { AppBanner } from '../appBanner/appBanner'
 import { ComicsList } from '../comicsList/comicsList'
 import { ErrorBoundary } from '../errorBoundary/errorBoundary'
 
-export const ComicsPage = () => {
+const ComicsPage = () => {
     return (
         <>
             <AppBanner />
@@ -13,3 +12,5 @@ export const ComicsPage = () => {
         </>
     )
 }
+
+export default ComicsPage

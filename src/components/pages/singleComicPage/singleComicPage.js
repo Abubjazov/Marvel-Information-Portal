@@ -5,7 +5,7 @@ import { ErrorMsg } from '../../errorMsg/errorMsg'
 import useMarvelService from '../../../services/MarvelService'
 import './SingleComicPage.scss'
 
-export const SingleComicPage = () => {
+const SingleComicPage = () => {
     const { comicId } = useParams()
     const [comic, setComic] = useState(null)
 
@@ -60,3 +60,5 @@ const View = ({ comic }) => {
         </div>
     )
 }
+
+export default SingleComicPage
