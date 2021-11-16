@@ -5,6 +5,7 @@ import { CharInfoSkeleton } from '../charInfoSkeleton/charInfoSkeleton'
 import useMarvelService from '../../services/MarvelService'
 
 import './CharInfo.scss'
+import { Link } from 'react-router-dom'
 
 export const CharInfo = (props) => {
     const [character, setCharacter] = useState(null)
@@ -13,7 +14,6 @@ export const CharInfo = (props) => {
     useEffect(() => {
         loadCharacter()
     }, [props])
-
 
     const onCharacterLoaded = (character) => {
         setCharacter(character)
@@ -52,11 +52,13 @@ const View = ({ character }) => {
 
     if (comics) {
         content = comics.map((comic, index) => {
+            const comicId = comics[index].resourceURI.replace('http://gateway.marvel.com/v1/public/comics/', '')
+
             return (
                 <li
                     className="char__comics-item"
                     key={index}>
-                    <a href={comic.resourceURI}>{comic.name}</a>
+                    <Link to={`/comics/${comicId}`}>{comic.name}</Link>
                 </li>
             )
         })
