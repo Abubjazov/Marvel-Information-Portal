@@ -3,8 +3,9 @@ import { Spinner } from '../spinner/spinner'
 import { ErrorMsg } from '../errorMsg/errorMsg'
 import useMarvelService from '../../services/MarvelService'
 import './ComicsList.scss'
+import { Link } from 'react-router-dom'
 
-export const ComicsList = (props) => {
+export const ComicsList = () => {
     const [comics, setComics] = useState([])
     const [loadingNewItems, setLoadingNewItems] = useState(false)
     const [offset, setOffset] = useState(1540)
@@ -42,7 +43,6 @@ export const ComicsList = (props) => {
     const spinner = loading && loadingNewItems ? <Spinner /> : null
     const content = <View
         comics={comics}
-        onComicSelected={props.onComicSelected}
         updateComicsList={updateComicsList}
         loadingNewItems={loadingNewItems}
         endOfComics={endOfComics}
@@ -59,7 +59,7 @@ export const ComicsList = (props) => {
 }
 
 const View = (props) => {
-    const { comics, onComicSelected, updateComicsList, loadingNewItems, endOfComics, focusOnItem, itemRefs } = props
+    const { comics, updateComicsList, loadingNewItems, endOfComics, focusOnItem, itemRefs } = props
 
     const content = comics.map((comic, i) => {
         const { id, name, thumbnail } = comic
@@ -69,29 +69,27 @@ const View = (props) => {
 
         return (
             <li
-                key={id}
+                key={id + i}
                 className="comics__item"
                 tabIndex={0}
                 ref={element => itemRefs.current[i] = element}
                 onClick={() => {
-                    onComicSelected(id)
                     focusOnItem(i)
                 }}
                 onKeyPress={(e) => {
                     if (e.key === ' ' || e.key === "Enter") {
-                        onComicSelected(id)
                         focusOnItem(i)
                     }
                 }}>
-                <a href={comic.resourceURI}>
+                <Link to={`/comics/${id}`}>
                     <img src={thumbnail} alt={name} style={imgStyle} className="comics__item-img" />
                     <div className="comics__item-name">{comic.name}</div>
                     <div className="comics__item-price">{comic.price}</div>
-                </a>
+                </Link>
             </li>
         )
     })
-
+    //comic.resourceURI
     return (
         <>
             <ul className="comics__grid">
