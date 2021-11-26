@@ -9,7 +9,7 @@ import { Link } from 'react-router-dom'
 
 export const CharInfo = (props) => {
     const [character, setCharacter] = useState(null)
-    const { loading, error, getCharacter, clearError } = useMarvelService()
+    const { status, setStatus, getCharacter, clearError } = useMarvelService()
 
     useEffect(() => {
         loadCharacter()
@@ -27,19 +27,31 @@ export const CharInfo = (props) => {
 
         getCharacter(characterId, 'max')
             .then(onCharacterLoaded)
+            .then(() => setStatus('confirmed'))
     }
 
-    const errorMessage = error ? <ErrorMsg /> : null
-    const spinner = loading ? <Spinner /> : null
-    const skeleton = !props.characterId ? <CharInfoSkeleton /> : null
-    const content = !(loading || error || !character) ? <View character={character} /> : null
+    const setContent = (status, character) => {
+        switch (status) {
+            case 'waiting':
+                return <CharInfoSkeleton />
+
+            case 'loading':
+                return <Spinner />
+
+            case 'confirmed':
+                return <View character={character} />
+
+            case 'error':
+                return <ErrorMsg />
+
+            default:
+                throw new Error('Unexpected process state!')
+        }
+    }
 
     return (
         <div className="char__info">
-            {errorMessage}
-            {spinner}
-            {skeleton}
-            {content}
+            {setContent(status, character)}
         </div>
     )
 
@@ -73,10 +85,10 @@ const View = ({ character }) => {
                 <div>
                     <div className="char__info-name">{name}</div>
                     <div className="char__btns">
-                        <a href={homepage} target="_blank" className="button button__main">
+                        <a href={homepage} target="_blank" rel="noreferrer" className="button button__main">
                             <div className="inner">homepage</div>
                         </a>
-                        <a href={wiki} target="_blank" className="button button__secondary">
+                        <a href={wiki} target="_blank" rel="noreferrer" className="button button__secondary">
                             <div className="inner">Wiki</div>
                         </a>
                     </div>

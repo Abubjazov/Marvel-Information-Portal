@@ -1,7 +1,7 @@
 import { useHttp } from '../Hooks/http.hook'
 
 const useMarvelService = () => {
-    const { loading, request, error, clearError } = useHttp()
+    const { loading, request, error, clearError, status, setStatus } = useHttp()
 
     const _apiBase = 'https://gateway.marvel.com:443/v1/public/'
     const _apiKey = `apikey=${process.env.REACT_APP_CLIENT_API_KEY}`
@@ -58,7 +58,7 @@ const useMarvelService = () => {
             pages: comic.pageCount ? `${comic.pageCount} pages` : '',
             thumbnail: comic.thumbnail.path + '.' + comic.thumbnail.extension,
             homepage: comic.urls[0].url,
-            price: comic.prices[0].price == '0' ? 'not available' : comic.prices[0].price + ' $'
+            price: comic.prices[0].price === '0' ? 'not available' : comic.prices[0].price + ' $'
         }
     }
 
@@ -84,7 +84,18 @@ const useMarvelService = () => {
         }
     }
 
-    return { loading, error, getCharacter, getCharacterByName, getAllCharacters, getAllComics, getComic, clearError }
+    return {
+        loading,
+        error,
+        status,
+        setStatus,
+        clearError,
+        getCharacter,
+        getCharacterByName,
+        getAllCharacters,
+        getAllComics,
+        getComic
+    }
 }
 
 export default useMarvelService
