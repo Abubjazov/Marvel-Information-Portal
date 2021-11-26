@@ -4,12 +4,10 @@ import { useState, useEffect } from 'react'
 import { Spinner } from '../spinner/spinner'
 import { ErrorMsg } from '../errorMsg/errorMsg'
 import { AppBanner } from '../appBanner/appBanner'
-import { SingleComicPage } from '../pages/singleComicPage/singleComicPage'
-import { SingleCharacterPage } from '../pages/singleCharacterPage/singleCharacterPage'
 
 import useMarvelService from '../../services/MarvelService'
 
-export const SinglePage = ({ dataType }) => {
+export const SinglePage = ({ Component, dataType }) => {
     const { id } = useParams()
     const [data, setData] = useState(null)
     const { loading, error, getComic, getCharacter, clearError } = useMarvelService()
@@ -36,7 +34,7 @@ export const SinglePage = ({ dataType }) => {
 
     const errorMessage = error ? <ErrorMsg /> : null
     const spinner = loading ? <Spinner /> : null
-    const content = !(loading || error || !data) ? dataType === 'comic' ? <SingleComicPage data={data} /> : <SingleCharacterPage data={data} /> : null
+    const content = !(loading || error || !data) ? <Component data={data} /> : null
 
     return (
         <>
