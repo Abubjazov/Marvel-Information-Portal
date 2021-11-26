@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom'
 
-import './SingleComicPage.scss'
+import './SingleComicLayout.scss'
 
-export const SingleComicPage = ({ data }) => {
+export const SingleComicLayout = ({ data }) => {
     const { name, description, thumbnail, language, pages, price } = data
 
     return (

@@ -1,9 +1,9 @@
 
 import { Link } from 'react-router-dom'
 
-import './SingleCharacterPage.scss'
+import './SingleCharacterLayout.scss'
 
-export const SingleCharacterPage = ({ data }) => {
+export const SingleCharacterLayout = ({ data }) => {
     const { name, description, thumbnail } = data
 
     return (
