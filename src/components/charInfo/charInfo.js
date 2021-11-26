@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react'
-import { Spinner } from '../spinner/spinner'
-import { ErrorMsg } from '../errorMsg/errorMsg'
-import { CharInfoSkeleton } from '../charInfoSkeleton/charInfoSkeleton'
+import { Link } from 'react-router-dom'
+
 import useMarvelService from '../../services/MarvelService'
+import { setContent } from '../../utils/setContent'
 
 import './CharInfo.scss'
-import { Link } from 'react-router-dom'
 
 export const CharInfo = (props) => {
     const [character, setCharacter] = useState(null)
@@ -30,35 +29,15 @@ export const CharInfo = (props) => {
             .then(() => setStatus('confirmed'))
     }
 
-    const setContent = (status, character) => {
-        switch (status) {
-            case 'waiting':
-                return <CharInfoSkeleton />
-
-            case 'loading':
-                return <Spinner />
-
-            case 'confirmed':
-                return <View character={character} />
-
-            case 'error':
-                return <ErrorMsg />
-
-            default:
-                throw new Error('Unexpected process state!')
-        }
-    }
-
     return (
         <div className="char__info">
-            {setContent(status, character)}
+            {setContent(status, View, character)}
         </div>
     )
-
 }
 
-const View = ({ character }) => {
-    const { name, description, thumbnail, homepage, wiki, comics } = character
+const View = ({ data }) => {
+    const { name, description, thumbnail, homepage, wiki, comics } = data
     let content = null
     let imgStyle = { 'objectFit': 'cover' }
 
