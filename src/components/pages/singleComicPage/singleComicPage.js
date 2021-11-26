@@ -44,7 +44,6 @@ const SingleComicPage = () => {
 
 const View = ({ comic }) => {
     const { name, description, thumbnail, language, pages, price } = comic
-    console.log(comic)
 
     return (
         <div className="comic">
