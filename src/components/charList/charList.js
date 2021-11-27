@@ -1,17 +1,38 @@
-import { useState, useEffect, useRef } from 'react'
-import { Spinner } from '../spinner/spinner'
-import { ErrorMsg } from '../errorMsg/errorMsg'
 import PropTypes from 'prop-types'
+import { useState, useEffect, useRef } from 'react'
+
 import useMarvelService from '../../services/MarvelService'
+import { ErrorMsg } from '../errorMsg/errorMsg'
+import { Spinner } from '../spinner/spinner'
+
 import './CharList.scss'
 
+const setContent = (status, Component, data) => {
+    console.log(data.loadingNewItems)
+    switch (status) {
+        case 'waiting':
+            return <Spinner />
 
-export const CharList = (props) => {
+        case 'loading':
+            return data.loadingNewItems ? <Component data={data} /> : <Spinner />
+
+        case 'confirmed':
+            return <Component data={data} />
+
+        case 'error':
+            return <ErrorMsg />
+
+        default:
+            throw new Error('Unexpected process state!')
+    }
+}
+
+export const CharList = ({ onCharacterSelected }) => {
     const [characters, setCharacters] = useState([])
     const [loadingNewItems, setLoadingNewItems] = useState(false)
     const [offset, setOffset] = useState(1540)
     const [endOfCharacters, setEndOfCharacters] = useState(false)
-    const { loading, error, getAllCharacters, clearError } = useMarvelService()
+    const { status, setStatus, getAllCharacters, clearError } = useMarvelService()
 
     useEffect(() => {
         updateCharacterList(false)
@@ -24,12 +45,13 @@ export const CharList = (props) => {
         setEndOfCharacters(newCharacters.length < 9 ? true : false)
     }
 
-    const updateCharacterList = () => {
+    const updateCharacterList = (LoadingNewItems = true) => {
         clearError()
-        setLoadingNewItems(true)
+        setLoadingNewItems(LoadingNewItems)
 
         getAllCharacters(offset)
             .then(onCharacterListLoaded)
+            .then(() => setStatus('confirmed'))
     }
 
     const itemRefs = useRef([])
@@ -40,28 +62,15 @@ export const CharList = (props) => {
         itemRefs.current[id].focus()
     }
 
-    const errorMessage = error ? <ErrorMsg /> : null
-    const spinner = loading && loadingNewItems ? <Spinner /> : null
-    const content = <View
-        characters={characters}
-        onCharacterSelected={props.onCharacterSelected}
-        updateCharacterList={updateCharacterList}
-        loadingNewItems={loadingNewItems}
-        endOfCharacters={endOfCharacters}
-        itemRefs={itemRefs}
-        focusOnItem={focusOnItem} />
-
     return (
         <div className="char__list">
-            {errorMessage}
-            {spinner}
-            {content}
+            {setContent(status, View, { characters, onCharacterSelected, updateCharacterList, loadingNewItems, endOfCharacters, focusOnItem, itemRefs })}
         </div>
     )
 }
 
-const View = (props) => {
-    const { characters, onCharacterSelected, updateCharacterList, loadingNewItems, endOfCharacters, focusOnItem, itemRefs } = props
+const View = ({ data }) => {
+    const { characters, onCharacterSelected, updateCharacterList, loadingNewItems, endOfCharacters, focusOnItem, itemRefs } = data
 
     const content = characters.map((character, i) => {
         const { id, name, thumbnail } = character
