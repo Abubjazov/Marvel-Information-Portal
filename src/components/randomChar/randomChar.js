@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react'
-import { Spinner } from '../spinner/spinner'
-import { ErrorMsg } from '../errorMsg/errorMsg'
+
 import useMarvelService from '../../services/MarvelService'
+import { setContent } from '../../utils/setContent'
+
 import './RandomChar.scss'
 
 import mjolnir from '../../resources/img/mjolnir.png'
 
 export const RandomChar = () => {
     const [character, setCharacter] = useState({})
-    const { loading, error, getCharacter, clearError } = useMarvelService()
+    const { status, setStatus, getCharacter, clearError } = useMarvelService()
 
     useEffect(() => {
         updateCharacter()
@@ -24,17 +25,39 @@ export const RandomChar = () => {
 
         getCharacter(characterId)
             .then(onCharacterLoaded)
+            .then(() => setStatus('confirmed'))
     }
-
-    const errorMessage = error ? <ErrorMsg /> : null
-    const spinner = loading ? <Spinner /> : null
-    const content = !(loading || error) ? <View character={character} /> : null
 
     return (
         <div className="randomchar">
-            {errorMessage}
-            {spinner}
-            {content}
+            {setContent(status, View, { character, updateCharacter })}
+
+        </div>
+    )
+}
+
+const View = ({ data }) => {
+    const { name, description, thumbnail, homepage, wiki } = data.character
+    const { updateCharacter } = data
+    return (
+        <>
+            <div className="randomchar__block">
+                <img src={thumbnail} alt={name} className="randomchar__img" />
+                <div className="randomchar__info">
+                    <p className="randomchar__name">{name}</p>
+                    <p className="randomchar__descr">
+                        {description}
+                    </p>
+                    <div className="randomchar__btns">
+                        <a href={homepage} target="_blank" rel="noreferrer" className="button button__main">
+                            <div className="inner">homepage</div>
+                        </a>
+                        <a href={wiki} target="_blank" rel="noreferrer" className="button button__secondary">
+                            <div className="inner">Wiki</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
             <div className="randomchar__static">
                 <p className="randomchar__title">
                     Random character for today!<br />
@@ -50,29 +73,6 @@ export const RandomChar = () => {
                 </button>
                 <img src={mjolnir} alt="mjolnir" className="randomchar__decoration" />
             </div>
-        </div>
-    )
-}
-
-const View = ({ character }) => {
-    const { name, description, thumbnail, homepage, wiki } = character
-    return (
-        <div className="randomchar__block">
-            <img src={thumbnail} alt={name} className="randomchar__img" />
-            <div className="randomchar__info">
-                <p className="randomchar__name">{name}</p>
-                <p className="randomchar__descr">
-                    {description}
-                </p>
-                <div className="randomchar__btns">
-                    <a href={homepage} target="_blank" rel="noreferrer" className="button button__main">
-                        <div className="inner">homepage</div>
-                    </a>
-                    <a href={wiki} target="_blank" rel="noreferrer" className="button button__secondary">
-                        <div className="inner">Wiki</div>
-                    </a>
-                </div>
-            </div>
-        </div>
+        </>
     )
 }
