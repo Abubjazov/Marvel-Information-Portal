@@ -69,7 +69,7 @@ const View = (props) => {
 
         return (
             <li
-                key={id + i}
+                key={i}
                 className="comics__item"
                 tabIndex={0}
                 ref={element => itemRefs.current[i] = element}
@@ -89,7 +89,7 @@ const View = (props) => {
             </li>
         )
     })
-    //comic.resourceURI
+
     return (
         <>
             <ul className="comics__grid">
