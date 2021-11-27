@@ -1,9 +1,10 @@
 import PropTypes from 'prop-types'
 import { useState, useEffect, useRef } from 'react'
 
-import useMarvelService from '../../services/MarvelService'
 import { ErrorMsg } from '../errorMsg/errorMsg'
 import { Spinner } from '../spinner/spinner'
+
+import useMarvelService from '../../services/MarvelService'
 
 import './CharList.scss'
 

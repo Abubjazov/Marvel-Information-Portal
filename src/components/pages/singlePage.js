@@ -9,7 +9,7 @@ import useMarvelService from '../../services/MarvelService'
 export const SinglePage = ({ Component, dataType }) => {
     const { id } = useParams()
     const [data, setData] = useState(null)
-    const { status, setStatus, getComic, getCharacter, error, clearError } = useMarvelService()
+    const { status, setStatus, getComic, getCharacter, clearError } = useMarvelService()
 
     useEffect(() => {
         updateData()
