@@ -31,7 +31,6 @@ export const RandomChar = () => {
     return (
         <div className="randomchar">
             {setContent(status, View, { character, updateCharacter })}
-
         </div>
     )
 }
