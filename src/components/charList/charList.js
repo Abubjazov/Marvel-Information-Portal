@@ -8,7 +8,6 @@ import { Spinner } from '../spinner/spinner'
 import './CharList.scss'
 
 const setContent = (status, Component, data) => {
-    console.log(data.loadingNewItems)
     switch (status) {
         case 'waiting':
             return <Spinner />

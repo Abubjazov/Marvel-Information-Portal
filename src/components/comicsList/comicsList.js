@@ -1,16 +1,37 @@
 import { useState, useEffect, useRef } from 'react'
-import { Spinner } from '../spinner/spinner'
-import { ErrorMsg } from '../errorMsg/errorMsg'
-import useMarvelService from '../../services/MarvelService'
-import './ComicsList.scss'
 import { Link } from 'react-router-dom'
+
+import useMarvelService from '../../services/MarvelService'
+import { ErrorMsg } from '../errorMsg/errorMsg'
+import { Spinner } from '../spinner/spinner'
+
+import './ComicsList.scss'
+
+const setContent = (status, Component, data) => {
+    switch (status) {
+        case 'waiting':
+            return <Spinner />
+
+        case 'loading':
+            return data.loadingNewItems ? <Component data={data} /> : <Spinner />
+
+        case 'confirmed':
+            return <Component data={data} />
+
+        case 'error':
+            return <ErrorMsg />
+
+        default:
+            throw new Error('Unexpected process state!')
+    }
+}
 
 export const ComicsList = () => {
     const [comics, setComics] = useState([])
     const [loadingNewItems, setLoadingNewItems] = useState(false)
     const [offset, setOffset] = useState(1540)
     const [endOfComics, setEndOfComics] = useState(false)
-    const { loading, error, getAllComics, clearError } = useMarvelService()
+    const { status, setStatus, getAllComics, clearError } = useMarvelService()
 
     useEffect(() => {
         updateComicsList(false)
@@ -23,12 +44,13 @@ export const ComicsList = () => {
         setEndOfComics(newComics.length < 8 ? true : false)
     }
 
-    const updateComicsList = () => {
+    const updateComicsList = (LoadingNewItems = true) => {
         clearError()
-        setLoadingNewItems(true)
+        setLoadingNewItems(LoadingNewItems)
 
         getAllComics(offset)
             .then(onComicsListLoaded)
+            .then(() => setStatus('confirmed'))
     }
 
     const itemRefs = useRef([])
@@ -39,27 +61,15 @@ export const ComicsList = () => {
         itemRefs.current[id].focus()
     }
 
-    const errorMessage = error ? <ErrorMsg /> : null
-    const spinner = loading && loadingNewItems ? <Spinner /> : null
-    const content = <View
-        comics={comics}
-        updateComicsList={updateComicsList}
-        loadingNewItems={loadingNewItems}
-        endOfComics={endOfComics}
-        itemRefs={itemRefs}
-        focusOnItem={focusOnItem} />
-
     return (
         <div className="comics__list">
-            {errorMessage}
-            {spinner}
-            {content}
+            {setContent(status, View, { comics, updateComicsList, loadingNewItems, endOfComics, focusOnItem, itemRefs })}
         </div>
     )
 }
 
-const View = (props) => {
-    const { comics, updateComicsList, loadingNewItems, endOfComics, focusOnItem, itemRefs } = props
+const View = ({ data }) => {
+    const { comics, updateComicsList, loadingNewItems, endOfComics, focusOnItem, itemRefs } = data
 
     const content = comics.map((comic, i) => {
         const { id, name, thumbnail } = comic
