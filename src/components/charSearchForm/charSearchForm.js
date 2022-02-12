@@ -8,26 +8,56 @@ import { ErrorMsg } from '../errorMsg/errorMsg'
 
 import './CharSearchForm.scss'
 
-export const CharSearchForm = () => {
-    const [char, setChar] = useState(null)
-    const { loading, error, getCharacterByName, clearError } = useMarvelService()
 
-    const onCharLoaded = (char) => {
-        setChar(char)
+const setContent = (status, Component, data) => {
+    switch (status) {
+        case 'waiting':
+            return <Component data={data} />
+
+        case 'loading':
+            return <Component data={data} />
+
+        case 'confirmed':
+            return <Component data={data} />
+
+        case 'error':
+            return <ErrorMsg />
+
+        default:
+            throw new Error('Unexpected process state!')
+    }
+}
+
+export const CharSearchForm = () => {
+    const [character, setCharacter] = useState(null)
+    const { status, setStatus, getCharacterByName, clearError } = useMarvelService()
+
+    const onCharacterLoaded = (character) => {
+        setCharacter(character)
     }
 
-    const updateChar = (name) => {
+    const updateCharacter = (name) => {
         clearError()
 
         getCharacterByName(name)
-            .then(onCharLoaded)
+            .then(onCharacterLoaded)
+            .then(() => setStatus('confirmed'))
     }
 
-    const errorMessage = error ? <div className="char__search-critical-error"><ErrorMsg /></div> : null;
-    const results = !char ? null : char.length > 0 ?
+    return (
+        <div className="char__search-form">
+            {setContent(status, View, { character, status, updateCharacter })}
+        </div>
+    )
+}
+
+const View = ({ data }) => {
+    const { character, status, updateCharacter } = data
+
+    const results = !character ? null : character.length > 0 ?
         <div className="char__search-wrapper">
-            <div className="char__search-success">There is! Visit {char[0].name} page?</div>
-            <Link to={`/characters/${char[0].id}`} className="button button__secondary">
+            <div className="char__search-success">There is! Visit {character[0].name} page?</div>
+            <Link to={`/characters/${character[0].id}`} className="button button__secondary">
                 <div className="inner">To page</div>
             </Link>
         </div> :
@@ -36,7 +66,7 @@ export const CharSearchForm = () => {
         </div>
 
     return (
-        <div className="char__search-form">
+        <>
             <Formik
                 initialValues={{
                     charName: ''
@@ -45,7 +75,7 @@ export const CharSearchForm = () => {
                     charName: Yup.string().required('This field is required')
                 })}
                 onSubmit={({ charName }) => {
-                    updateChar(charName)
+                    updateCharacter(charName)
                 }}
             >
                 <Form>
@@ -59,7 +89,8 @@ export const CharSearchForm = () => {
                         <button
                             type="submit"
                             className="button button__main"
-                            disabled={loading}>
+                            disabled={status === 'loading'}
+                        >
                             <div className="inner">find</div>
                         </button>
                     </div>
@@ -67,7 +98,6 @@ export const CharSearchForm = () => {
                 </Form>
             </Formik>
             {results}
-            {errorMessage}
-        </div>
+        </>
     )
 }

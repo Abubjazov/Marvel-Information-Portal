@@ -83,7 +83,7 @@ const View = ({ data }) => {
                 key={id}
                 className="char__item"
                 tabIndex={0}
-                ref={element => itemRefs.current[i] = element}
+                ref={character => itemRefs.current[i] = character}
                 onClick={() => {
                     onCharacterSelected(id)
                     focusOnItem(i)
